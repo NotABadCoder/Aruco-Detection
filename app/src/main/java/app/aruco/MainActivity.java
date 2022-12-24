@@ -183,25 +183,7 @@ public class MainActivity<Point2f, typedef> extends CameraActivity implements Cv
                 valid = false;
             }
         }
-        if (!valid || (newServer.isEmpty() && newDict == -1)) {
-            showMessage("Cannot parse QR code as server or dictionary");
-        } else {
-            String qrMsg = "";
-            if (!newServer.isEmpty()) {
-                server = newServer;
-                qrMsg = String.format("Server set to %s", newServer);
-            }
-            if (newDict != -1) {
-                dictionary = newDict;
-                if (!qrMsg.isEmpty()) {
-                    qrMsg += String.format(", dictionary set to %s", newDictName);
-                } else {
-                    qrMsg = String.format("Dictionary set to %s", newDictName);
-                }
-            }
-            savePreferences();
-            showMessage(qrMsg);
-        }
+
     }
 
     private void showText(Mat img, String text, Point org, double[] gravity, Scalar color) {
@@ -302,9 +284,7 @@ public class MainActivity<Point2f, typedef> extends CameraActivity implements Cv
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (server.isEmpty()) {
-                showMessage("Scan QR code with server address to set up touch-to-send");
-            } else {
+
                 int tCols = mCamera.getWidth();
                 int tRows = mCamera.getHeight();
                 double ratio = max((double) cCols / tCols, (double) cRows / tRows);
@@ -313,9 +293,9 @@ public class MainActivity<Point2f, typedef> extends CameraActivity implements Cv
                 byte[] requestData = ("[[" + cCols + "," + cRows + "],[" +
                         touchX + "," + touchY + "]," + arucoData + "]").getBytes(StandardCharsets.UTF_8);
                 StringRequest sr = new StringRequest(Request.Method.POST, server, response -> {
-                    showMessage("Server reply: " + response);
+
                 }, error -> {
-                    showMessage("Error: " + error.getMessage());
+
                 }) {
                     @Override
                     public byte[] getBody() {
@@ -326,8 +306,7 @@ public class MainActivity<Point2f, typedef> extends CameraActivity implements Cv
                         DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
                 queue.add(sr);
-                showMessage("Sending request");
-            }
+
         }
         return false;
     }
